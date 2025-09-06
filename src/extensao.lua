@@ -1,14 +1,3 @@
-local function verificar_cpf()
-
-
-end
-
-local function formatar_cpf()
-
-    return string.sub(arg[3], 1, 3) .. "." .. string.sub(arg[3], 4, 6) .. "." .. string.sub(arg[3], 7, 9) .. "-" .. string.sub(arg[3], 10, 11)
-
-end
-
 local function split(str, pattern)
 
     particoes = {}
@@ -46,6 +35,106 @@ local function split(str, pattern)
 
 end
 
+local function verificar_cpf()
+
+    local soma = 0
+
+    for i = 10, 2, -1 do
+
+        local posicaoAtual = math.abs(i - 11)
+
+        local digitoAtual = arg[3]:sub(posicaoAtual, posicaoAtual)
+
+        digitoAtualInt = tonumber(digitoAtual)
+
+        soma = soma + (digitoAtualInt * i)        
+    end
+
+    local resto = soma % 11
+    local primeiroVerificador = 11 - resto
+
+    if tostring(primeiroVerificador) ~= arg[3]:sub(10, 10) then
+        error("CPF inválido: Verifique o primeiro digito verificador!")
+    end
+
+    soma = 0
+
+    for i = 10, 2, -1 do
+
+        local posicaoAtual = math.abs(i - 12)
+
+        local digitoAtual = arg[3]:sub(posicaoAtual, posicaoAtual)
+
+        digitoAtualInt = tonumber(digitoAtual)
+
+        soma = soma + (digitoAtualInt * i)
+    end
+
+    resto = soma % 11
+    local segundoVerificador = 11 - resto
+
+    if tostring(segundoVerificador) ~= arg[3]:sub(11, 11) then
+        error("CPF inválido: Verifique o segundo digito verificador!")
+    end
+
+    return true
+end
+
+local function formatar_cpf()
+
+    return string.sub(arg[3], 1, 3) .. "." .. string.sub(arg[3], 4, 6) .. "." .. string.sub(arg[3], 7, 9) .. "-" .. string.sub(arg[3], 10, 11)
+
+end
+
+local function verificar_data()
+
+    if #arg[3] ~= 10 then
+        error("Formato da data invalido!")
+    end
+
+    local dataDividida = split(arg[3], "-")
+
+    if #dataDividida ~= 3 then
+        error("Formato da data esta invalido!")
+    end
+
+    if #dataDividida[1] ~= 4 then
+        error("Data com formato inválido: Ano deve ter 4 caracteres!")
+    end
+    
+    if #dataDividida[2] ~= 2 then
+        error("Data com formato inválido: Mês deve ter 2 caracteres!")
+    end
+
+    local mesNumerico = tonumber(dataDividida[2])
+
+    if mesNumerico then
+        if mesNumerico < 1 or mesNumerico > 12 then
+            error("Data com formato inválido: Verifique o mês inserido!")
+        end
+    else
+        error("Data com formato inválido: Verifique o mês inserido!")
+    end
+
+    if #dataDividida[3] ~= 2 then
+        error("Data com formato inválido: Dia deve ter 2 caracteres!")
+    end
+
+    local diaNumerico = tonumber(dataDividida[3])
+
+    if diaNumerico then
+        if diaNumerico < 1 or diaNumerico > 31 then
+            error("Data com formato inválido: Verifique o dia inserido!")
+        end
+    else
+        error("Data com formato inválido: Verifique o dia inserido!")
+    end
+
+    print("Data valida!")
+
+    return true
+
+end
 
 local function formatar_data()
 
@@ -83,10 +172,25 @@ end
 
 local function tratar_insert()
 
-    if arg[2]:find("^" .. "cpf") then
-        print("CPF inserido!")
+    if arg[2] == nil then
+        error("Tipo de dado não foi inserido!")
+    elseif arg[3] == nil then
+        error("Dado a ser formatado não foi inserido!")
     end
 
+    local dadoEnviado = string.upper(arg[2])
+
+    if dadoEnviado == "CPF" then
+
+        return verificar_cpf()
+
+    elseif dadoEnviado == "DATA" then
+
+        return verificar_data()
+    
+    else
+        error("Tipo de dado não foi inserido")
+    end
 end
 
 --[[
@@ -98,6 +202,8 @@ end
 
     Exemplo: get cpf 13423412411
     Exemplo: add cpf 23412312312
+    Exemplo: get data 2025-09-06
+    Exemplo: add data 2025-09-06
 ]]--
 
 local funcaoEnviada = string.upper(arg[1])
