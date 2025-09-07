@@ -206,6 +206,10 @@ end
     Exemplo: add data 2025-09-06
 ]]--
 
+if #arg < 1 then
+    error("Parametros não inseridos")
+end
+
 local funcaoEnviada = string.upper(arg[1])
 
 if funcaoEnviada == "GET" then
