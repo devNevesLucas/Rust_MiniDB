@@ -60,7 +60,7 @@ fn tratar_select(database: HashMap<String, String>, chave: &str) -> HashMap<Stri
 
     match obter_script(&lua,"get", chave, &valor_obtido).eval::<String>() {
         Ok(resultado_tratado) => {
-            println!("GET {} => {}", chave, resultado_tratado);
+            println!("GET \x1b[94m{}\x1b[0m => {}", chave, resultado_tratado);
         }
         Err(error) => {
             println!("Erro encontrado!");
@@ -101,10 +101,10 @@ fn main() {
                 if resultado {
                     database = realizar_insert(database, input_split[1], input_split[2]);
 
+                    println!("Chave \x1b[92m{}\x1b[0m inserida!", input_split[1]);
                 } else {
                     println!("Chave {} não inserida!", input_split[1]);
                 }
-
             }
             "GET" => {
                 database = tratar_select(database, input_split[1]);
