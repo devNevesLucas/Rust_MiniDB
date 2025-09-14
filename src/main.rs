@@ -22,11 +22,11 @@ fn verificar_insert(chave: &str, valor: &str) -> bool {
     let lua = Lua::new();
 
     match obter_script(&lua, "add", split_chave[0], valor).eval::<bool>() {
-        Ok(retorno) => {            
+        Ok(retorno) => {
             return retorno;
         }
         Err(problema) => {
-            println!("Caiu no erro: {}", problema.to_string());
+            println!("\x1b[101mHouve um erro:\x1b[0m \x1b[31m{}\x1b[0m", problema.to_string());
             return false;
         }
     };
@@ -42,7 +42,7 @@ fn realizar_insert(mut database: HashMap<String, String>, chave: &str, valor: &s
 fn tratar_select(database: HashMap<String, String>, chave: &str) -> HashMap<String, String>{
     
     if !database.contains_key(chave) {
-        println!("A chave {} não existe!", chave);
+        println!("\x1b[101mA chave {} não existe!\x1b[0m", chave);
         return database;
     }
 
@@ -51,7 +51,7 @@ fn tratar_select(database: HashMap<String, String>, chave: &str) -> HashMap<Stri
             valor.to_string()
         },
         None => {
-            println!("Item não encontrado!");
+            println!("\x1b[101mItem não encontrado!\x1b[0m");
             return database;
         }
     };
@@ -63,8 +63,8 @@ fn tratar_select(database: HashMap<String, String>, chave: &str) -> HashMap<Stri
             println!("GET \x1b[94m{}\x1b[0m => {}", chave, resultado_tratado);
         }
         Err(error) => {
-            println!("Erro encontrado!");
-            println!("{}", error.to_string());
+            println!("\x1b[101mErro encontrado!\x1b[0m");
+            println!("\x1b[31m{}\x1b[0m", error.to_string());
         }
     }
 
@@ -98,7 +98,7 @@ fn main() {
             "ADD" => {
                 let resultado = verificar_insert(input_split[1], input_split[2]);
 
-                if resultado {
+                if resultado {                    
                     database = realizar_insert(database, input_split[1], input_split[2]);
 
                     println!("Chave \x1b[92m{}\x1b[0m inserida!", input_split[1]);
