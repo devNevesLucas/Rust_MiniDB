@@ -32,18 +32,14 @@ fn verificar_insert(chave: &str, valor: &str) -> bool {
     };
 }
 
-fn realizar_insert(mut database: HashMap<String, String>, chave: &str, valor: &str) -> HashMap<String, String> {
-
+fn realizar_insert(database: &mut HashMap<String, String>, chave: &str, valor: &str) {
     database.insert(chave.to_string(), valor.to_string());
-
-    return database;
 }
 
-fn tratar_select(database: HashMap<String, String>, chave: &str) -> HashMap<String, String>{
+fn tratar_select(database: &mut HashMap<String, String>, chave: &str) {
     
     if !database.contains_key(chave) {
         println!("\x1b[101mA chave {} não existe!\x1b[0m", chave);
-        return database;
     }
 
     let valor_obtido = match database.get(chave) {
@@ -52,7 +48,7 @@ fn tratar_select(database: HashMap<String, String>, chave: &str) -> HashMap<Stri
         },
         None => {
             println!("\x1b[101mItem não encontrado!\x1b[0m");
-            return database;
+            return;
         }
     };
 
@@ -67,8 +63,6 @@ fn tratar_select(database: HashMap<String, String>, chave: &str) -> HashMap<Stri
             println!("\x1b[31m{}\x1b[0m", error.to_string());
         }
     }
-
-    return database;
 }
 
 fn main() {
@@ -99,7 +93,7 @@ fn main() {
                 let resultado = verificar_insert(input_split[1], input_split[2]);
 
                 if resultado {                    
-                    database = realizar_insert(database, input_split[1], input_split[2]);
+                    realizar_insert(&mut database, input_split[1], input_split[2]);
 
                     println!("Chave \x1b[92m{}\x1b[0m inserida!", input_split[1]);
                 } else {
@@ -107,7 +101,7 @@ fn main() {
                 }
             }
             "GET" => {
-                database = tratar_select(database, input_split[1]);
+                tratar_select(&mut database, input_split[1]);
             }
             _ => {
                 println!("Digite um comando válido");
